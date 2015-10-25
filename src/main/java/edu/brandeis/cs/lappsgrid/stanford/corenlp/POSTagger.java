@@ -2,6 +2,7 @@ package edu.brandeis.cs.lappsgrid.stanford.corenlp;
 
 import edu.brandeis.cs.lappsgrid.stanford.StanfordWebServiceException;
 import edu.brandeis.cs.lappsgrid.stanford.corenlp.api.IPOSTagger;
+import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
@@ -48,8 +49,7 @@ public class POSTagger extends AbstractStanfordCoreNLPWebService implements
                 Annotation a = newAnnotation(view,
                         String.format("%s%d_%d", TOKEN_ID, sid, tid++), Uri.POS,
                         token.beginPosition(), token.endPosition());
-                a.addFeature(Features.Token.PART_OF_SPEECH, token.get(PartOfSpeechAnnotation.class));
-                a.addFeature(Features.Token.WORD, token.value());
+                a.addFeature(Features.Token.POS, token.get(PartOfSpeechAnnotation.class));
             }
         }
 
