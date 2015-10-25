@@ -1,13 +1,19 @@
 package edu.brandeis.cs.lappsgrid.stanford.corenlp;
 
 import edu.brandeis.cs.lappsgrid.stanford.StanfordWebServiceException;
-import org.junit.Assert;
 import org.junit.Test;
+import org.lappsgrid.metadata.ServiceMetadata;
 import org.lappsgrid.serialization.Data;
 import org.lappsgrid.serialization.Serializer;
+import org.lappsgrid.serialization.lif.Annotation;
 import org.lappsgrid.serialization.lif.Container;
+import org.lappsgrid.serialization.lif.View;
 
+import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.lappsgrid.discriminator.Discriminators.Uri;
 
 /**
  * <i>TestTokenizer.java</i> Language Application Grids (<b>LAPPS</b>)
@@ -17,64 +23,48 @@ import java.util.Map;
  * href="http://www.programcreek.com/2012/05/opennlp-tutorial/">OpenNLP
  * Tutorial</a>
  * <p>
- * 
+ *
  * @author Chunqi Shi ( <i>shicq@cs.brandeis.edu</i> )<br>
  *         Nov 20, 2013<br>
- * 
+ *
  */
 public class TestNamedEntityRecognizer extends TestService {
 
-	NamedEntityRecognizer ner;
+    String testSent = "Hello Mike.";
 
-	public TestNamedEntityRecognizer() throws StanfordWebServiceException {
-		ner = new NamedEntityRecognizer();
-	}
-
-
-	@Test
-	public void testFind() {
-		String text = "Mike, Smith is a good person and he is from Boston.";
-		String ners = ner.find(text);
-		Assert.assertEquals(
-				"NamedEntityRecognizer Failure.",
-				ners,
-				"<PERSON>Mike</PERSON> , <PERSON>Smith</PERSON> is a good person and he is from <LOCATION>Boston</LOCATION> .");
-	}
-
-
-
-
-    @Test
-    public void testExecute(){
-
-        System.out.println("/-----------------------------------\\");
-
-        String json = ner.execute("Mike");
-        System.out.println(json);
-        Container container = new Container((Map) Serializer.parse(json, Data.class).getPayload());
-
-        json = ner.execute("Hello Mike");
-        System.out.println(json);
-        container = new Container((Map) Serializer.parse(json, Data.class).getPayload());
-
-        json = ner.execute(jsons.get("payload1.json"));
-        System.out.println(json);
-        container = new Container((Map) Serializer.parse(json, Data.class).getPayload());
-
-        json = ner.execute(jsons.get("payload2.json"));
-        System.out.println(json);
-        container = new Container((Map) Serializer.parse(json, Data.class).getPayload());
-
-        json = ner.execute(jsons.get("payload3.json"));
-        System.out.println(json);
-        container = new Container((Map) Serializer.parse(json, Data.class).getPayload());
-
-        json = ner.execute(jsons.get("tokens.json"));
-        System.out.println(json);
-        container = new Container((Map) Serializer.parse(json, Data.class).getPayload());
-
-
-        System.out.println("\\-----------------------------------/\n");
+    public TestNamedEntityRecognizer() throws StanfordWebServiceException {
+        service = new NamedEntityRecognizer();
     }
 
+    @Test
+    public void testMetadata() {
+        Data data = Serializer.parse(service.getMetadata(), Data.class);
+        ServiceMetadata metadata = new ServiceMetadata((Map) data.getPayload());
+        assertEquals("Name is not correct",
+                NamedEntityRecognizer.class.getName(), metadata.getName());
+    }
+
+    @Test
+    public void testExecute() {
+        String input = new Data<>(Uri.LIF, wrapContainer(testSent)).asJson();
+        String result = service.execute(input);
+        Container resultContainer = reconstructPayload(result);
+        assertEquals("Text is corrupted.", resultContainer.getText(), testSent);
+        List<View> views = resultContainer.getViews();
+        if (views.size() != 1) {
+            fail(String.format("Expected 1 view. Found: %d", views.size()));
+        }
+        View view = resultContainer.getView(0);
+        assertTrue("Not containing named entities", view.contains(Uri.NE));
+        List<Annotation> annotations = view.getAnnotations();
+        if (annotations.size() != 1) {
+            fail(String.format("Expected 1 NE. Found: %d", views.size()));
+        }
+        Annotation mike = annotations.get(0);
+        assertEquals("Mike is a person. @type is not correct: " + mike.getAtType(),
+                mike.getAtType(), Uri.PERSON);
+        System.out.println(Serializer.toPrettyJson(resultContainer));
+    }
 }
+
+
