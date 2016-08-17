@@ -1,11 +1,12 @@
 package edu.brandeis.cs.lappsgrid.stanford
 
-import edu.brandeis.cs.lappsgrid.stanford.corenlp.*
+import edu.brandeis.cs.lappsgrid.stanford.corenlp.NamedEntityRecognizer
+import edu.brandeis.cs.lappsgrid.stanford.corenlp.POSTagger
+import edu.brandeis.cs.lappsgrid.stanford.corenlp.Splitter
+import edu.brandeis.cs.lappsgrid.stanford.corenlp.Tokenizer
 import org.lappsgrid.api.WebService
-import org.lappsgrid.discriminator.Discriminators
 import org.lappsgrid.serialization.Data
 import org.lappsgrid.serialization.Serializer
-import org.lappsgrid.serialization.lif.Container
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -14,9 +15,12 @@ import java.util.concurrent.ConcurrentLinkedQueue
  */
 
 class ProcessHostageCorpus {
-    private static final PATH = "c:/Users/krim/Projects/lappsgrid/!discovery/HostageCorpus"
+    private static final PATH = "c:/Users/krim/Projects/lappsgrid/!discovery/corpora/kidnap2"
+    private final packPath
 
     public ProcessHostageCorpus() {
+        packPath = PATH + '/' + this.getClass().getPackage().getName().split('\\.')[-1]
+        println packPath
     }
 
     public void run() {
@@ -36,7 +40,7 @@ class ProcessHostageCorpus {
         Thread tagger = new TaggerWorker(split, tagged)
 //        Thread recognizer = new NameEnitityRecognizerWorker(tagged, neq)
 //        Thread converter = new ConverterWorker(tagged, converted)
-        Thread writer = new DataWriter('c:/Users/krim/Projects/lappsgrid/!discovery/HostageCorpus/stanford', tagged)
+        Thread writer = new DataWriter(packPath, tagged)
 
 //        List threads = [ reader, tokenizer, splitter, tagger, recognizer, converter, writer ]
 //        List threads = [ reader, tokenizer, splitter, tagger, converter, writer]
@@ -67,9 +71,7 @@ class DataReader extends Thread {
             println "Reading ${file.path}"
             Packet packet = new Packet()
             packet.filename = file.name
-            Data data = Serializer.parse(file.text, Data)
-            Container container = new Container(data.payload)
-            packet.data = new Data(Discriminators.Uri.TEXT, container.text)
+            packet.data = Serializer.parse(file.text, Data)
             packets.add(packet)
             file = files.poll()
         }
