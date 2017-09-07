@@ -1,7 +1,7 @@
 {
   "$schema" : "http://vocab.lappsgrid.org/schema/service-schema-1.0.0.json",
   "name" : "edu.brandeis.cs.lappsgrid.stanford.corenlp.NamedEntityRecognizer",
-  "version" : "2.0.4",
+  "version" : "2.1.0-SNAPSHOT",
   "vendor" : "http://www.cs.brandeis.edu/",
   "allow" : "http://vocab.lappsgrid.org/ns/allow#any",
   "license" : "http://vocab.lappsgrid.org/ns/license#apache-2.0",
@@ -14,6 +14,6 @@
     "encoding" : "UTF-8",
     "language" : [ "en" ],
     "format" : [ "http://vocab.lappsgrid.org/ns/media/jsonld#lif" ],
-    "annotations" : [ "http://vocab.lappsgrid.org/Person", "http://vocab.lappsgrid.org/Location", "http://vocab.lappsgrid.org/Date", "http://vocab.lappsgrid.org/Organization" ]
+    "annotations" : [ "http://vocab.lappsgrid.org/NamedEntity" ]
   }
 }
