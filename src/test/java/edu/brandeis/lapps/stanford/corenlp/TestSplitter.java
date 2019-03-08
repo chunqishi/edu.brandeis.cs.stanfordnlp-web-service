@@ -26,10 +26,10 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
  */
 public class TestSplitter extends TestService {
 
-    String testSent = "If possible, we would appreciate comments no later than 3:00 PM EST on Sunday, August 26.  Comments can be faxed to my attention at 202/338-2416 or emailed to cfr@vnf.com or gdb@vnf.com (Gary GaryBachman).\n\nThank you.";
 
     public TestSplitter() {
         service = new Splitter();
+        testText = "If possible, we would appreciate comments no later than 3:00 PM EST on Sunday, August 26.  Comments can be faxed to my attention at 202/338-2416 or emailed to cfr@vnf.com or gdb@vnf.com (Gary GaryBachman).\n\nThank you.";
     }
 
     @Test
@@ -45,30 +45,11 @@ public class TestSplitter extends TestService {
 
     @Test
     public void testExecute(){
-        String result0 = service.execute(testSent);
-        String input = new Data<>(Uri.LIF, wrapContainer(testSent)).asJson();
-        String result = service.execute(input);
-        Assert.assertEquals(result0, result);
+        Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
 
-        System.out.println("<------------------------------------------------------------------------------");
-        System.out.println(String.format("      %s         ", this.getClass().getName()));
-        System.out.println("-------------------------------------------------------------------------------");
-        System.out.println(result);
-        System.out.println("------------------------------------------------------------------------------>");
+        List<Annotation> annotations = executionResult.getView(0).getAnnotations();
+        assertEquals("Sentences", 3, annotations.size());
 
-        Container resultContainer = reconstructPayload(result);
-        assertEquals("Text is corrupted.", resultContainer.getText(), testSent);
-        List<View> views = resultContainer.getViews();
-        if (views.size() != 1) {
-            fail(String.format("Expected 1 view. Found: %d", views.size()));
-        }
-        View view = resultContainer.getView(0);
-        assertTrue("Not containing sentences", view.contains(Uri.SENTENCE));
-        List<Annotation> annotations = view.getAnnotations();
-        if (annotations.size() != 3) {
-            fail(String.format("Expected 3 sentences. Found: %d", annotations.size()));
-        }
-        System.out.println(Serializer.toPrettyJson(resultContainer));
     }
 }
 

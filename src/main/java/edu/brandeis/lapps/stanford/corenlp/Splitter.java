@@ -25,7 +25,7 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
 public class Splitter extends AbstractStanfordCoreNLPWebService {
 
     private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a sentence splitter service" +
-            "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\" annotators.";
+            "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\" annotators as one pipeline.";
 
     public Splitter() {
         this.init(PROP_TOKENIZE, PROP_SENTENCE_SPLIT);
@@ -35,11 +35,9 @@ public class Splitter extends AbstractStanfordCoreNLPWebService {
     public String execute(Container container) {
 
         String text = container.getText();
-        View view = null;
-        view = container.newView();
-        view.addContains(Uri.SENTENCE,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "splitter:stanford");
+        View view = container.newView();
+        setUpContainsMetadata(view);
+
         edu.stanford.nlp.pipeline.Annotation annotation
                 = new edu.stanford.nlp.pipeline.Annotation(text);
         snlp.annotate(annotation);
@@ -59,11 +57,11 @@ public class Splitter extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    String loadMetadata() {
+    ServiceMetadata loadMetadata() {
         ServiceMetadata metadata = this.setCommonMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.SENTENCE);
 
-        return new Data<>(Uri.META, metadata).asPrettyJson();
+        return metadata;
     }
 }

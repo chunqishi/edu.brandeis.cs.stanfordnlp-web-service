@@ -15,7 +15,6 @@ import org.lappsgrid.serialization.Data;
 import org.lappsgrid.serialization.Serializer;
 import org.lappsgrid.serialization.lif.Annotation;
 import org.lappsgrid.serialization.lif.Container;
-import org.lappsgrid.serialization.lif.Contains;
 import org.lappsgrid.serialization.lif.View;
 import org.lappsgrid.vocabulary.Features;
 
@@ -35,7 +34,7 @@ public class DependencyParser extends AbstractStanfordCoreNLPWebService {
 
     private static String rootLabel = "ROOT";
     private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a dependency parser service"
-            + "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"parse\" annotators.";
+            + "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"parse\" annotators as one pipeline.";
 
     public DependencyParser() {
         this.init(PROP_TOKENIZE, PROP_SENTENCE_SPLIT, PROP_PARSE);
@@ -43,20 +42,11 @@ public class DependencyParser extends AbstractStanfordCoreNLPWebService {
 
     @Override
     public String execute(Container container) {
+
         String text = container.getText();
-        View view = null;
-        view = container.newView();
-        Contains containsToken = view.addContains(Uri.TOKEN ,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "tokenizer:stanford");
-        containsToken.put("posTagSet", "penn");
-        Contains containsDep = view.addContains(Uri.DEPENDENCY_STRUCTURE,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "dependency-parser:stanford");
-        containsDep.put("dependencySet", "StanfordDependencies");
-        view.addContains(Uri.DEPENDENCY ,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "dependency-parser:stanford");
+        View view = container.newView();
+        setUpContainsMetadata(view);
+
         edu.stanford.nlp.pipeline.Annotation doc
                 = new edu.stanford.nlp.pipeline.Annotation(text);
         snlp.annotate(doc);
@@ -128,13 +118,15 @@ public class DependencyParser extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    String loadMetadata() {
+    ServiceMetadata loadMetadata() {
         ServiceMetadata metadata = this.setCommonMetadata();
 
         metadata.setDescription(TOOL_DESCRIPTION);
-        metadata.getProduces().addAnnotations(Uri.DEPENDENCY, Uri.DEPENDENCY_STRUCTURE, Uri.TOKEN);
+        metadata.getProduces().addAnnotations(Uri.DEPENDENCY, Uri.DEPENDENCY_STRUCTURE, Uri.POS);
+        metadata.getProduces().addTagSet(Uri.POS, Uri.TAGS_POS_PENNTB);
+        metadata.getProduces().addTagSet(Uri.DEPENDENCY_STRUCTURE, Uri.TAGS_DEP_STANFORD);
 
-        return new Data<>(Uri.META, metadata).asPrettyJson();
+        return metadata;
 
     }
 }

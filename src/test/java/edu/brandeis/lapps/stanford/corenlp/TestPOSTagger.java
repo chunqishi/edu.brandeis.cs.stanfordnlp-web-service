@@ -1,6 +1,5 @@
 package edu.brandeis.lapps.stanford.corenlp;
 
-import junit.framework.Assert;
 import org.junit.Test;
 import org.lappsgrid.metadata.IOSpecification;
 import org.lappsgrid.metadata.ServiceMetadata;
@@ -26,10 +25,10 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
  */
 public class TestPOSTagger extends TestService {
 
-    String testSent = "Hello World.";
 
     public TestPOSTagger() {
         service = new POSTagger();
+        testText = "Good morning.";
     }
 
     @Test
@@ -45,36 +44,16 @@ public class TestPOSTagger extends TestService {
     @Test
     public void testExecute(){
 
-        String result0 = service.execute(testSent);
-        String input = new Data<>(Uri.LIF, wrapContainer(testSent)).asJson();
-        String result = service.execute(input);
-        Assert.assertEquals(result0, result);
+        Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
 
-        System.out.println("<------------------------------------------------------------------------------");
-        System.out.println(String.format("      %s         ", this.getClass().getName()));
-        System.out.println("-------------------------------------------------------------------------------");
-        System.out.println(result);
-        System.out.println("------------------------------------------------------------------------------>");
-
-        testSent = "Good morning.";
-        result = service.execute(testSent);
-        Container resultContainer = reconstructPayload(result);
-        assertEquals("Text is corrupted.", resultContainer.getText(), testSent);
-        List<View> views = resultContainer.getViews();
-        if (views.size() != 1) {
-            fail(String.format("Expected 1 view. Found: %d", views.size()));
-        }
-        View view = resultContainer.getView(0);
-        assertTrue("Not containing POS tags", view.contains(Uri.POS));
+        View view = executionResult.getView(0);
         List<Annotation> annotations = view.getAnnotations();
-        if (annotations.size() != 3) {
-            fail(String.format("Expected 3 tokens. Found: %d", views.size()));
-        }
+
+        assertEquals("Tokens", 3, annotations.size());
         Annotation annotation = annotations.get(0);
-        assertEquals("@type is not correct: " + annotation.getAtType(),
-                annotation.getAtType(), Uri.TOKEN);
+        assertEquals("@type is not correct: " + annotation.getAtType(), annotation.getAtType(), Uri.TOKEN);
         String goodPos = annotation.getFeature("pos");
-        assertEquals("'Good' is a JJ.Found: " + goodPos, goodPos, "JJ");
-        System.out.println(Serializer.toPrettyJson(resultContainer));
+        assertEquals("Correct tag for 'Good' is JJ. Found: " + goodPos, goodPos, "JJ");
+
     }
 }

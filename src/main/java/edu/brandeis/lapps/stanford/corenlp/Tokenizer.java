@@ -25,7 +25,7 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
 public class Tokenizer extends AbstractStanfordCoreNLPWebService {
 
     private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a tokenizer service" +
-            "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\" annotators.";
+            "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\" annotators as one pipeline.";
 
     public Tokenizer() {
         this.init(PROP_TOKENIZE, PROP_SENTENCE_SPLIT);
@@ -35,13 +35,9 @@ public class Tokenizer extends AbstractStanfordCoreNLPWebService {
     public String execute(Container container) {
 
         String text = container.getText();
-        View view = null;
-        view = container.newView();
-        view.addContains(Uri.TOKEN,
-                String.format("%s:%s", this.getClass().getName(),getVersion()),
-                "tokenizer:stanford");
+        View view = container.newView();
+        setUpContainsMetadata(view);
 
-        // run stanford module
         edu.stanford.nlp.pipeline.Annotation annotation
                 = new edu.stanford.nlp.pipeline.Annotation(text);
         snlp.annotate(annotation);
@@ -66,11 +62,11 @@ public class Tokenizer extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    String loadMetadata() {
+    ServiceMetadata loadMetadata() {
         ServiceMetadata metadata = this.setCommonMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.TOKEN);
 
-        return new Data<>(Uri.META, metadata).asPrettyJson();
+        return metadata;
     }
 }

@@ -7,11 +7,15 @@ import org.lappsgrid.metadata.ServiceMetadata;
 import org.lappsgrid.serialization.Data;
 import org.lappsgrid.serialization.Serializer;
 import org.lappsgrid.serialization.lif.Container;
+import org.lappsgrid.serialization.lif.Contains;
+import org.lappsgrid.serialization.lif.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,6 +44,9 @@ public abstract class AbstractStanfordCoreNLPWebService implements WebService {
     private static ConcurrentHashMap<String, StanfordCoreNLP> cache =
             new ConcurrentHashMap<>();
 
+    static final String containerScheme = "http://vocab.lappsgrid.org/schema/container-schema-1.1.0.json";
+    static final String metadataScheme = "http://vocab.lappsgrid.org/schema/metadata-schema-1.1.0.json";
+
     static final String PROP_TOKENIZE = "tokenize";
     static final String PROP_SENTENCE_SPLIT = "ssplit";
     static final String PROP_POS_TAG = "pos";
@@ -58,25 +65,51 @@ public abstract class AbstractStanfordCoreNLPWebService implements WebService {
     static final String COREF_ID = "coref_";
     static final String NE_ID = "ne_";
 
+    static final Map<String, String> tagsetMap;
+    static {
+        Map<String, String> aMap = new HashMap<>();
+        aMap.put(Uri.POS, "posTagSet");
+        aMap.put(Uri.NE, "namedEntityCategorySet");
+        aMap.put(Uri.PHRASE_STRUCTURE, "categorySet");
+        aMap.put(Uri.DEPENDENCY_STRUCTURE, "dependencySet");
+        tagsetMap = Collections.unmodifiableMap(aMap);
+    }
+
+    static final Map<String, String> containsTypesMap;
+    static {
+        Map<String, String> aMap = new HashMap<>();
+        aMap.put(Uri.TOKEN, "tokenizer:stanford:brandeis");
+        aMap.put(Uri.SENTENCE, "splitter:stanford:brandeis");
+        aMap.put(Uri.POS, "postagger:stanford:brandeis");
+        aMap.put(Uri.NE, "ner:stanford:brandeis");
+        aMap.put(Uri.COREF, "coreference:stanford:brandeis");
+        aMap.put(Uri.MARKABLE, "markable:stanford:brandeis");
+        aMap.put(Uri.CONSTITUENT, "syntacticparser:stanford:brandeis");
+        aMap.put(Uri.PHRASE_STRUCTURE, "syntacticparser:stanford:brandeis");
+        aMap.put(Uri.DEPENDENCY, "dependency-parser:stanford:brandeis");
+        aMap.put(Uri.DEPENDENCY_STRUCTURE, "dependency-parser:stanford:brandeis");
+        containsTypesMap = Collections.unmodifiableMap(aMap);
+    }
 
     private Properties props = new Properties();
     StanfordCoreNLP snlp = null;
 
-    private String metadataString;
+    ServiceMetadata metadata;
 
     /**
      * Default constructor only tries to load metadata.
+     * Doing this will also set up metadata and keep it in memory
      */
     AbstractStanfordCoreNLPWebService() {
         try {
-            metadataString = loadMetadata();
+            this.metadata = loadMetadata();
         } catch(Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Get version from metadata
+     * Get version from pom metadata
      */
     String getVersion() {
         String path = "/version.properties";
@@ -160,7 +193,7 @@ public abstract class AbstractStanfordCoreNLPWebService implements WebService {
             case Uri.TEXT:
                 cont = new Container();
                 // TODO: 5/9/18  fix url when it settles in
-                cont.setSchema("http://vocab.lappsgrid.org/schema/container-schema-1.0.0.json");
+                cont.setSchema(containerScheme);
                 cont.setText((String) data.getPayload());
                 cont.setLanguage("en");
                 break;
@@ -185,17 +218,29 @@ public abstract class AbstractStanfordCoreNLPWebService implements WebService {
      */
     public abstract String execute(Container json);
 
-    abstract String loadMetadata();
+    abstract ServiceMetadata loadMetadata();
 
     @Override
     public String getMetadata() {
-        return this.metadataString;
+        return new Data<>(Uri.META, this.metadata).asPrettyJson();
+    }
+
+    void setUpContainsMetadata(View view) {
+        for (String atype : this.metadata.getProduces().getAnnotations()) {
+            Contains newContains = view.addContains(atype,
+                    String.format("%s:%s", this.getClass().getName(), getVersion()),
+                    containsTypesMap.get(atype));
+            if (this.metadata.getProduces().getTagSets().containsKey(atype)) {
+                newContains.put(tagsetMap.get(atype),
+                        this.metadata.getProduces().getTagSets().get(atype));
+            }
+        }
     }
 
     ServiceMetadata setCommonMetadata() {
         ServiceMetadata commonMetadata = new ServiceMetadata();
         // TODO: 4/22/18 fix url when it settles in
-        commonMetadata.setSchema("http://vocab.lappsgrid.org/schema/metadata-schema-1.1.0.json");
+        commonMetadata.setSchema(metadataScheme);
         commonMetadata.setVendor("http://www.cs.brandeis.edu/");
         commonMetadata.setLicense(Uri.APACHE2);
         commonMetadata.setVersion(this.getVersion());

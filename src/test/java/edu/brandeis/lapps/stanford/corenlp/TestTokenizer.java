@@ -26,10 +26,10 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
  */
 public class TestTokenizer extends TestService {
 
-    String testSent = "Hello World.";
 
     public TestTokenizer() {
         service = new Tokenizer();
+        testText = "Hello World.";
     }
 
     @Test
@@ -45,30 +45,9 @@ public class TestTokenizer extends TestService {
 
     @Test
     public void testExecute(){
+        Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
 
-        String result0 = service.execute(testSent);
-        String input = new Data<>(Uri.LIF, wrapContainer(testSent)).asJson();
-        String result = service.execute(input);
-        Assert.assertEquals(result0, result);
-
-        System.out.println("<------------------------------------------------------------------------------");
-        System.out.println(String.format("      %s         ", this.getClass().getName()));
-        System.out.println("-------------------------------------------------------------------------------");
-        System.out.println(result);
-        System.out.println("------------------------------------------------------------------------------>");
-
-        Container resultContainer = reconstructPayload(result);
-        assertEquals("Text is corrupted.", resultContainer.getText(), testSent);
-        List<View> views = resultContainer.getViews();
-        if (views.size() != 1) {
-            fail(String.format("Expected 1 view. Found: %d", views.size()));
-        }
-        View view = resultContainer.getView(0);
-        assertTrue("Not containing tokens", view.contains(Uri.TOKEN));
-        List<Annotation> annotations = view.getAnnotations();
-        if (annotations.size() != 3) {
-            fail(String.format("Expected 3 token. Found: %d", annotations.size()));
-        }
-        System.out.println(Serializer.toPrettyJson(resultContainer));
+        List<Annotation> annotations = executionResult.getView(0).getAnnotations();
+        assertEquals("Tokens", 3, annotations.size());
     }
 }

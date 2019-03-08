@@ -10,7 +10,6 @@ import org.lappsgrid.serialization.Data;
 import org.lappsgrid.serialization.Serializer;
 import org.lappsgrid.serialization.lif.Annotation;
 import org.lappsgrid.serialization.lif.Container;
-import org.lappsgrid.serialization.lif.Contains;
 import org.lappsgrid.serialization.lif.View;
 
 import java.util.List;
@@ -28,7 +27,7 @@ import static org.lappsgrid.vocabulary.Features.Token;
 public class POSTagger extends AbstractStanfordCoreNLPWebService {
 
     private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a part-of-speech tagging service" +
-                    "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\" annotators.";
+                    "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\" annotators as one pipeline.";
 
     public POSTagger() {
         this.init(PROP_TOKENIZE, PROP_SENTENCE_SPLIT, PROP_POS_TAG);
@@ -38,19 +37,12 @@ public class POSTagger extends AbstractStanfordCoreNLPWebService {
     public String execute(Container container) {
 
         String text = container.getText();
-        View view = null;
-        view = container.newView();
+        View view = container.newView();
+        setUpContainsMetadata(view);
 
-        Contains con = view.addContains(Uri.POS,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "tagger:stanford");
-        // TODO: 3/1/2018 there must be a set of discriminators for tag set names
-        // using some arbitrary string for now
-        con.put("posTagSet", "penn");
         edu.stanford.nlp.pipeline.Annotation annotation
                 = new edu.stanford.nlp.pipeline.Annotation(text);
         snlp.annotate(annotation);
-
         int sid = 0;
         List<CoreMap> sents = annotation.get(SentencesAnnotation.class);
         for (CoreMap sent : sents) {
@@ -71,11 +63,12 @@ public class POSTagger extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    String loadMetadata() {
+    ServiceMetadata loadMetadata() {
         ServiceMetadata metadata = this.setCommonMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.POS);
+        metadata.getProduces().addTagSet(Uri.POS, Uri.TAGS_POS_PENNTB);
 
-        return new Data<>(Uri.META, metadata).asPrettyJson();
+        return metadata;
     }
 }

@@ -25,10 +25,10 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
  */
 public class TestDependencyParser extends TestService {
 
-    String testSent = "Hi, Programcreek is a very huge and useful website.";
 
     public TestDependencyParser() {
         service = new DependencyParser();
+        testText = "Hi, Programcreek is a very huge and useful website.";
     }
 
 
@@ -39,8 +39,8 @@ public class TestDependencyParser extends TestService {
         IOSpecification produces = metadata.getProduces();
         assertEquals("Expected 3 annotations, found: " + produces.getAnnotations().size(),
                 3, produces.getAnnotations().size());
-        assertTrue("Tokens not produced",
-                produces.getAnnotations().contains(Uri.TOKEN));
+        assertTrue("POS not produced",
+                produces.getAnnotations().contains(Uri.POS));
         assertTrue("Dependencies not produced",
                 produces.getAnnotations().contains(Uri.DEPENDENCY));
         assertTrue("Dependency Structures not produced",
@@ -49,31 +49,7 @@ public class TestDependencyParser extends TestService {
 
     @Test
     public void testExecute(){
+        Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
 
-
-        String result0 = service.execute(testSent);
-        String input = new Data<>(Uri.LIF, wrapContainer(testSent)).asJson();
-        String result = service.execute(input);
-        Assert.assertEquals(result0, result);
-        System.out.println("<------------------------------------------------------------------------------");
-        System.out.println(String.format("      %s         ", this.getClass().getName()));
-        System.out.println("-------------------------------------------------------------------------------");
-        System.out.println(result);
-        System.out.println("------------------------------------------------------------------------------>");
-
-
-        input = "Hi, Programcreek is a very huge and useful website.";
-        result = service.execute(input);
-        Container resultContainer = reconstructPayload(result);
-        assertEquals("Text is corrupted.", resultContainer.getText(), testSent);
-        List<View> views = resultContainer.getViews();
-        if (views.size() != 1) {
-            fail(String.format("Expected 1 view. Found: %d", views.size()));
-        }
-        View view = resultContainer.getView(0);
-        assertTrue("Not containing tokens", view.contains(Uri.TOKEN));
-        assertTrue("Not containing dependency", view.contains(Uri.DEPENDENCY));
-        assertTrue("Not containing dependency structure", view.contains(Uri.DEPENDENCY_STRUCTURE));
-        System.out.println(Serializer.toPrettyJson(resultContainer));
     }
 }

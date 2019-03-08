@@ -9,7 +9,6 @@ import org.lappsgrid.serialization.Data;
 import org.lappsgrid.serialization.Serializer;
 import org.lappsgrid.serialization.lif.Annotation;
 import org.lappsgrid.serialization.lif.Container;
-import org.lappsgrid.serialization.lif.Contains;
 import org.lappsgrid.serialization.lif.View;
 
 import java.util.List;
@@ -26,7 +25,7 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
 public class NamedEntityRecognizer extends AbstractStanfordCoreNLPWebService {
 
     private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a named entity recognition service" +
-            "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\", \"lemma\", \"ner\" annotators.";
+            "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\", \"lemma\", \"ner\" annotators as one pipeline.";
 
     public NamedEntityRecognizer() {
         this.init(PROP_TOKENIZE, PROP_SENTENCE_SPLIT,
@@ -37,13 +36,9 @@ public class NamedEntityRecognizer extends AbstractStanfordCoreNLPWebService {
     public String execute(Container container) {
 
         String text = container.getText();
-        View view = null;
-        view = container.newView();
-        Contains con = view.addContains(Uri.NE,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "ner:stanford");
-        // TODO: 3/8/2018 change the value when one's ready
-        con.put("namedEntityCategorySet", "conll2003.eng");
+        View view = container.newView();
+        setUpContainsMetadata(view);
+
         int id = -1;
         edu.stanford.nlp.pipeline.Annotation annotation
                 = new edu.stanford.nlp.pipeline.Annotation(text);
@@ -69,11 +64,12 @@ public class NamedEntityRecognizer extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    String loadMetadata() {
+    ServiceMetadata loadMetadata() {
         ServiceMetadata metadata = this.setCommonMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.NE);
+        metadata.getProduces().addTagSet(Uri.NE, Uri.TAGS_NER_STANFORD);
 
-        return new Data<>(Uri.META, metadata).asPrettyJson();
+        return metadata;
     }
 }

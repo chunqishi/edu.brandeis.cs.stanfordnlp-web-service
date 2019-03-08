@@ -13,7 +13,6 @@ import org.lappsgrid.serialization.Data;
 import org.lappsgrid.serialization.Serializer;
 import org.lappsgrid.serialization.lif.Annotation;
 import org.lappsgrid.serialization.lif.Container;
-import org.lappsgrid.serialization.lif.Contains;
 import org.lappsgrid.serialization.lif.View;
 import org.lappsgrid.vocabulary.Features;
 
@@ -34,7 +33,7 @@ import static org.lappsgrid.vocabulary.Features.Token;
 public class Coreference extends AbstractStanfordCoreNLPWebService {
 
     private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a coreference resolution service" +
-            "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\", \"lemma\", \"ner\", \"parse\", \"dcoref\" annotators.";
+            "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\", \"lemma\", \"ner\", \"parse\", \"dcoref\" annotators as one pipeline.";
 
     public Coreference() {
         this.init(PROP_TOKENIZE,PROP_SENTENCE_SPLIT,
@@ -45,21 +44,8 @@ public class Coreference extends AbstractStanfordCoreNLPWebService {
     public String execute(Container container) {
 
         String text = container.getText();
-
-        View view = null;
-        view = container.newView();
-        Contains containsToken = view.addContains(Uri.TOKEN,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "tokenizer:stanford");
-        containsToken.put("posTagSet", "penn");
-
-        view.addContains(Uri.COREF,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "coreference:stanford");
-
-        view.addContains(Uri.MARKABLE,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "markable:stanford");
+        View view = container.newView();
+        setUpContainsMetadata(view);
 
         edu.stanford.nlp.pipeline.Annotation annotation
                 = new edu.stanford.nlp.pipeline.Annotation(text);
@@ -126,11 +112,12 @@ public class Coreference extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    String loadMetadata() {
+    ServiceMetadata loadMetadata() {
         ServiceMetadata metadata = this.setCommonMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
-        metadata.getProduces().addAnnotations(Uri.COREF, Uri.TOKEN, Uri.MARKABLE);
+        metadata.getProduces().addAnnotations(Uri.COREF, Uri.POS, Uri.MARKABLE);
+        metadata.getProduces().addTagSet(Uri.POS, Uri.TAGS_POS_PENNTB);
 
-        return new Data<>(Uri.META, metadata).asPrettyJson();
+        return metadata;
     }
 }

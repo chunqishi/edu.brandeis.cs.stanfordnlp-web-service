@@ -15,7 +15,6 @@ import org.lappsgrid.serialization.Data;
 import org.lappsgrid.serialization.Serializer;
 import org.lappsgrid.serialization.lif.Annotation;
 import org.lappsgrid.serialization.lif.Container;
-import org.lappsgrid.serialization.lif.Contains;
 import org.lappsgrid.serialization.lif.View;
 import org.lappsgrid.vocabulary.Features;
 
@@ -35,7 +34,7 @@ import static org.lappsgrid.vocabulary.Features.Token;
 public class Parser extends AbstractStanfordCoreNLPWebService {
 
     private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a phrase structure parser service" +
-                    "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"parse\" annotators.";
+                    "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"parse\" annotators as one pipeline.";
 
     public Parser() {
         this.init(PROP_TOKENIZE, PROP_SENTENCE_SPLIT, PROP_PARSE);
@@ -45,20 +44,8 @@ public class Parser extends AbstractStanfordCoreNLPWebService {
     public String execute(Container container) {
 
         String text = container.getText();
-
-        View view = null;
-        view = container.newView();
-        Contains containsToken = view.addContains(Uri.TOKEN,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "tokenizer:stanford");
-        containsToken.put("posTagSet", "penn");
-        Contains containsPhraseStructure = view.addContains(Uri.PHRASE_STRUCTURE,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "syntacticparser:stanford");
-        containsPhraseStructure.put("categorySet", "pennTreeBank");
-        view.addContains(Uri.CONSTITUENT,
-                String.format("%s:%s", this.getClass().getName(), getVersion()),
-                "syntacticparser:stanford");
+        View view = container.newView();
+        setUpContainsMetadata(view);
 
         edu.stanford.nlp.pipeline.Annotation annotation
                 = new edu.stanford.nlp.pipeline.Annotation(text);
@@ -138,11 +125,13 @@ public class Parser extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    String loadMetadata() {
+    ServiceMetadata loadMetadata() {
         ServiceMetadata metadata = this.setCommonMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
-        metadata.getProduces().addAnnotations(Uri.CONSTITUENT, Uri.TOKEN, Uri.PHRASE_STRUCTURE);
+        metadata.getProduces().addAnnotations(Uri.CONSTITUENT, Uri.POS, Uri.PHRASE_STRUCTURE);
+        metadata.getProduces().addTagSet(Uri.POS, Uri.TAGS_POS_PENNTB);
+        metadata.getProduces().addTagSet(Uri.PHRASE_STRUCTURE, Uri.TAGS_CAT_PENNTB);
 
-        return new Data<>(Uri.META, metadata).asPrettyJson();
+        return metadata;
     }
 }

@@ -25,10 +25,10 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
  */
 public class TestCoreference extends TestService {
 
-    String testSent= "Mike, Smith is a good person and he is from Boston. John and Mary went to the store. They bought some milk.";
 
     public TestCoreference() {
         service = new Coreference();
+        testText = "Smith is a good person and he is from Boston. John and Mary went to the store. They bought some milk.";
     }
 
 
@@ -40,8 +40,8 @@ public class TestCoreference extends TestService {
         assertEquals(
                 "Expected 3 annotations, found: " + produces.getAnnotations().size(),
                 3, produces.getAnnotations().size());
-        assertTrue("Tokens not produced",
-                produces.getAnnotations().contains(Uri.TOKEN));
+        assertTrue("POS not produced",
+                produces.getAnnotations().contains(Uri.POS));
         assertTrue("Markabels not produced",
                 produces.getAnnotations().contains(Uri.MARKABLE));
         assertTrue("Coreference chains not produced",
@@ -50,27 +50,7 @@ public class TestCoreference extends TestService {
 
     @Test
     public void testExecute(){
-        String result0 = service.execute(testSent);
-        String input = new Data<>(Uri.LIF, wrapContainer(testSent)).asJson();
-        String result = service.execute(input);
-        Assert.assertEquals(result0, result);
-        System.out.println("<------------------------------------------------------------------------------");
-        System.out.println(String.format("      %s         ", this.getClass().getName()));
-        System.out.println("-------------------------------------------------------------------------------");
-        System.out.println(result);
-        System.out.println("------------------------------------------------------------------------------>");
+        Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
 
-        Container resultContainer = reconstructPayload(result);
-
-        assertEquals("Text is corrupted.", resultContainer.getText(), testSent);
-        List<View> views = resultContainer.getViews();
-        if (views.size() != 1) {
-            fail(String.format("Expected 1 view. Found: %d", views.size()));
-        }
-        View view = resultContainer.getView(0);
-        assertTrue("Not containing tokens", view.contains(Uri.TOKEN));
-        assertTrue("Not containing markables", view.contains(Uri.MARKABLE));
-        assertTrue("Not containing coreference chains", view.contains(Uri.COREF));
-        System.out.println(Serializer.toPrettyJson(resultContainer));
     }
 }
