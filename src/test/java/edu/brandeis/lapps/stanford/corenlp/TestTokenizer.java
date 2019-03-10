@@ -1,6 +1,5 @@
 package edu.brandeis.lapps.stanford.corenlp;
 
-import edu.brandeis.lapps.TestBrandeisService;
 import org.junit.Test;
 import org.lappsgrid.metadata.IOSpecification;
 import org.lappsgrid.metadata.ServiceMetadata;
@@ -13,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-public class TestTokenizer extends TestBrandeisService {
+public class TestTokenizer extends TestCorenlpService {
 
     public TestTokenizer() {
         service = new Tokenizer();
@@ -22,7 +21,7 @@ public class TestTokenizer extends TestBrandeisService {
 
     @Test
     public void testMetadata(){
-        ServiceMetadata metadata = super.testCommonMetadata();
+        ServiceMetadata metadata = super.testDefaultMetadata();
         IOSpecification requires = metadata.getRequires();
         IOSpecification produces = metadata.getProduces();
         assertEquals("Expected 1 annotation, found: " + produces.getAnnotations().size(),

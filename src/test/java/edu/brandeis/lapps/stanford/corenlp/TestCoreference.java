@@ -1,16 +1,18 @@
 package edu.brandeis.lapps.stanford.corenlp;
 
-import edu.brandeis.lapps.TestBrandeisService;
 import org.junit.Test;
 import org.lappsgrid.metadata.IOSpecification;
 import org.lappsgrid.metadata.ServiceMetadata;
+import org.lappsgrid.serialization.lif.Annotation;
 import org.lappsgrid.serialization.lif.Container;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-public class TestCoreference extends TestBrandeisService {
+public class TestCoreference extends TestCorenlpService {
 
 
     public TestCoreference() {
@@ -21,7 +23,7 @@ public class TestCoreference extends TestBrandeisService {
 
     @Test
     public void testMetadata(){
-        ServiceMetadata metadata = super.testCommonMetadata();
+        ServiceMetadata metadata = super.testDefaultMetadata();
         IOSpecification requires = metadata.getRequires();
         IOSpecification produces = metadata.getProduces();
         assertEquals(
@@ -38,6 +40,10 @@ public class TestCoreference extends TestBrandeisService {
     @Test
     public void testExecute(){
         Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
+        List<Annotation> annotations = executionResult.getView(0).getAnnotations();
+
+        assertEquals("Chains (\"Smith\" and \"J&M\")", 2,
+                annotations.stream().filter(ann -> ann.getAtType().equals(Uri.COREF)).count());
 
     }
 }

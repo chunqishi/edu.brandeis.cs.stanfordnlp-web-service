@@ -1,16 +1,18 @@
 package edu.brandeis.lapps.stanford.corenlp;
 
-import edu.brandeis.lapps.TestBrandeisService;
 import org.junit.Test;
 import org.lappsgrid.metadata.IOSpecification;
 import org.lappsgrid.metadata.ServiceMetadata;
+import org.lappsgrid.serialization.lif.Annotation;
 import org.lappsgrid.serialization.lif.Container;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-public class TestParser extends TestBrandeisService {
+public class TestParser extends TestCorenlpService {
 
 
     public TestParser() {
@@ -20,7 +22,7 @@ public class TestParser extends TestBrandeisService {
 
     @Test
     public void testMetadata(){
-        ServiceMetadata metadata = super.testCommonMetadata();
+        ServiceMetadata metadata = super.testDefaultMetadata();
         IOSpecification requires = metadata.getRequires();
         IOSpecification produces = metadata.getProduces();
         assertEquals("Expected 3 annotations, found: " + produces.getAnnotations().size(),
@@ -37,8 +39,10 @@ public class TestParser extends TestBrandeisService {
     @Test
     public void testExecute(){
         Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
-        executionResult.getView(0).getAnnotations();
+        List<Annotation> annotations = executionResult.getView(0).getAnnotations();
 
+        assertEquals("Trees", 2,
+                annotations.stream().filter(ann -> ann.getAtType().equals(Uri.PHRASE_STRUCTURE)).count());
 
     }
 }

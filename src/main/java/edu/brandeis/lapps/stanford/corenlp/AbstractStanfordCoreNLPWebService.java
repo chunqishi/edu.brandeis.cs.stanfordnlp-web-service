@@ -2,6 +2,9 @@ package edu.brandeis.lapps.stanford.corenlp;
 
 import edu.brandeis.lapps.BrandeisService;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import org.lappsgrid.discriminator.Discriminators;
+import org.lappsgrid.metadata.IOSpecification;
+import org.lappsgrid.metadata.ServiceMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,5 +66,23 @@ public abstract class AbstractStanfordCoreNLPWebService extends BrandeisService 
         return val;
     }
 
+    protected ServiceMetadata setDefaultMetadata() {
+        ServiceMetadata metadata = super.setDefaultMetadata();
+        IOSpecification required = new IOSpecification();
+        required.addLanguage("en");
+        required.setEncoding("UTF-8");
+        required.addFormat(Discriminators.Uri.TEXT);
+        required.addFormat(Discriminators.Uri.LIF);
+        metadata.setRequires(required);
+
+        IOSpecification produces = new IOSpecification();
+        produces.addLanguage("en");
+        produces.setEncoding("UTF-8");
+        produces.addFormat(Discriminators.Uri.LIF);
+        metadata.setProduces(produces);
+
+        return metadata;
+
+    }
 }
 

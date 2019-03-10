@@ -58,7 +58,7 @@ public class NamedEntityRecognizer extends AbstractStanfordCoreNLPWebService {
 
     @Override
     protected ServiceMetadata loadMetadata() {
-        ServiceMetadata metadata = setCommonMetadata();
+        ServiceMetadata metadata = setDefaultMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.NE);
         metadata.getProduces().addTagSet(Uri.NE, Uri.TAGS_NER_STANFORD);

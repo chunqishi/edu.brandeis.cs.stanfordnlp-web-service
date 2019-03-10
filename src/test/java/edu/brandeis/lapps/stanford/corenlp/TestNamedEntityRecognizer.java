@@ -1,12 +1,10 @@
 package edu.brandeis.lapps.stanford.corenlp;
 
-import edu.brandeis.lapps.TestBrandeisService;
 import org.junit.Test;
 import org.lappsgrid.metadata.IOSpecification;
 import org.lappsgrid.metadata.ServiceMetadata;
 import org.lappsgrid.serialization.lif.Annotation;
 import org.lappsgrid.serialization.lif.Container;
-import org.lappsgrid.serialization.lif.View;
 
 import java.util.List;
 
@@ -14,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-public class TestNamedEntityRecognizer extends TestBrandeisService {
+public class TestNamedEntityRecognizer extends TestCorenlpService {
 
     public TestNamedEntityRecognizer() {
         service = new NamedEntityRecognizer();
@@ -23,7 +21,7 @@ public class TestNamedEntityRecognizer extends TestBrandeisService {
 
     @Test
     public void testMetadata(){
-        ServiceMetadata metadata = super.testCommonMetadata();
+        ServiceMetadata metadata = super.testDefaultMetadata();
         IOSpecification requires = metadata.getRequires();
         IOSpecification produces = metadata.getProduces();
         assertEquals("Expected 1 annotations, found: " + produces.getAnnotations().size(),
@@ -35,9 +33,8 @@ public class TestNamedEntityRecognizer extends TestBrandeisService {
     @Test
     public void testExecute() {
         Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
+        List<Annotation> annotations = executionResult.getView(0).getAnnotations();
 
-        View view = executionResult.getView(0);
-        List<Annotation> annotations = view.getAnnotations();
         assertEquals("Entities", 1, annotations.size());
         Annotation mike = annotations.get(0);
         assertEquals("Label is not correct.", "person", mike.getLabel());

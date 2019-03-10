@@ -56,7 +56,7 @@ public class Tokenizer extends AbstractStanfordCoreNLPWebService {
 
     @Override
     protected ServiceMetadata loadMetadata() {
-        ServiceMetadata metadata = setCommonMetadata();
+        ServiceMetadata metadata = setDefaultMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.TOKEN);
 

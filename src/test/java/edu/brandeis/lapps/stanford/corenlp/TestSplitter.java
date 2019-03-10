@@ -1,6 +1,5 @@
 package edu.brandeis.lapps.stanford.corenlp;
 
-import edu.brandeis.lapps.TestBrandeisService;
 import org.junit.Test;
 import org.lappsgrid.metadata.IOSpecification;
 import org.lappsgrid.metadata.ServiceMetadata;
@@ -12,7 +11,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-public class TestSplitter extends TestBrandeisService {
+public class TestSplitter extends TestCorenlpService {
 
 
     public TestSplitter() {
@@ -22,7 +21,7 @@ public class TestSplitter extends TestBrandeisService {
 
     @Test
     public void testMetadata() {
-        ServiceMetadata metadata = super.testCommonMetadata();
+        ServiceMetadata metadata = super.testDefaultMetadata();
         IOSpecification requires = metadata.getRequires();
         IOSpecification produces = metadata.getProduces();
         assertEquals("Expected 1 annotation, found: " + produces.getAnnotations().size(),
@@ -34,8 +33,8 @@ public class TestSplitter extends TestBrandeisService {
     @Test
     public void testExecute(){
         Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
-
         List<Annotation> annotations = executionResult.getView(0).getAnnotations();
+
         assertEquals("Sentences", 3, annotations.size());
 
     }

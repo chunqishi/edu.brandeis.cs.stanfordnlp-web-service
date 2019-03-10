@@ -57,7 +57,7 @@ public class POSTagger extends AbstractStanfordCoreNLPWebService {
 
     @Override
     protected ServiceMetadata loadMetadata() {
-        ServiceMetadata metadata = setCommonMetadata();
+        ServiceMetadata metadata = setDefaultMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.POS);
         metadata.getProduces().addTagSet(Uri.POS, Uri.TAGS_POS_PENNTB);

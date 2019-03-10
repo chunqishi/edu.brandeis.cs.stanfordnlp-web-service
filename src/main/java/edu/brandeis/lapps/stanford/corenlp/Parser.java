@@ -119,7 +119,7 @@ public class Parser extends AbstractStanfordCoreNLPWebService {
 
     @Override
     protected ServiceMetadata loadMetadata() {
-        ServiceMetadata metadata = setCommonMetadata();
+        ServiceMetadata metadata = setDefaultMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.CONSTITUENT, Uri.POS, Uri.PHRASE_STRUCTURE);
         metadata.getProduces().addTagSet(Uri.POS, Uri.TAGS_POS_PENNTB);

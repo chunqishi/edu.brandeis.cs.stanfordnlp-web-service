@@ -106,7 +106,7 @@ public class Coreference extends AbstractStanfordCoreNLPWebService {
 
     @Override
     protected ServiceMetadata loadMetadata() {
-        ServiceMetadata metadata = setCommonMetadata();
+        ServiceMetadata metadata = setDefaultMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.COREF, Uri.POS, Uri.MARKABLE);
         metadata.getProduces().addTagSet(Uri.POS, Uri.TAGS_POS_PENNTB);
