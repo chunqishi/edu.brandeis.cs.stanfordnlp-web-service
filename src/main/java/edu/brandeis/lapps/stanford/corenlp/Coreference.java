@@ -23,13 +23,6 @@ import java.util.Map;
 
 import static org.lappsgrid.vocabulary.Features.Token;
 
-/**
- *
- * @author Chunqi SHI (shicq@cs.brandeis.edu)
- * @author Keigh Rim (krim@brandeis.edu)
- * @since 2014-03-25
- *
- */
 public class Coreference extends AbstractStanfordCoreNLPWebService {
 
     private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a coreference resolution service" +
@@ -41,11 +34,11 @@ public class Coreference extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    public String execute(Container container) {
+    protected String execute(Container container) {
 
         String text = container.getText();
         View view = container.newView();
-        setUpContainsMetadata(view);
+        setUpContainsMetadata(view, "stanford");
 
         edu.stanford.nlp.pipeline.Annotation annotation
                 = new edu.stanford.nlp.pipeline.Annotation(text);
@@ -112,8 +105,8 @@ public class Coreference extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    ServiceMetadata loadMetadata() {
-        ServiceMetadata metadata = this.setCommonMetadata();
+    protected ServiceMetadata loadMetadata() {
+        ServiceMetadata metadata = setCommonMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.COREF, Uri.POS, Uri.MARKABLE);
         metadata.getProduces().addTagSet(Uri.POS, Uri.TAGS_POS_PENNTB);

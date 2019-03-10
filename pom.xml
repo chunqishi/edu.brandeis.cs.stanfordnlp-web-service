@@ -18,9 +18,17 @@
 
 
     <properties>
-        <lapps.all>2.5.0-SNAPSHOT</lapps.all>
         <stanford.version>3.3.1</stanford.version>
+        <scaffolding.version>1.0.0-SNAPSHOT</scaffolding.version>
+        <brandeis.nexus.baseurl>http://morbius.cs-i.brandeis.edu:8081</brandeis.nexus.baseurl>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>maven-group</id>
+            <url>${brandeis.nexus.baseurl}/repository/maven-public/</url>
+        </repository>
+    </repositories>
 
     <pluginRepositories>
         <pluginRepository>
@@ -33,20 +41,28 @@
         <repository>
             <id>brandeis-nexus</id>
             <name>Releases</name>
-            <url>http://morbius.cs-i.brandeis.edu:8081/repository/maven-releases/</url>
+            <url>${brandeis.nexus.baseurl}/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>brandeis-nexus</id>
             <name>Snapshot</name>
-            <url>http://morbius.cs-i.brandeis.edu:8081/repository/maven-snapshots/</url>
+            <url>${brandeis.nexus.baseurl}/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
     <dependencies>
         <dependency>
-            <groupId>org.lappsgrid</groupId>
-            <artifactId>all</artifactId>
-            <version>${lapps.all}</version>
+            <groupId>edu.brandeis.lapps</groupId>
+            <artifactId>brandeis-lapps-service</artifactId>
+            <version>${scaffolding.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.brandeis.lapps</groupId>
+            <artifactId>brandeis-lapps-service</artifactId>
+            <version>${scaffolding.version}</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>edu.stanford.nlp</groupId>

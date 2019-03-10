@@ -1,34 +1,20 @@
 package edu.brandeis.lapps.stanford.corenlp;
 
-import junit.framework.Assert;
+import edu.brandeis.lapps.TestBrandeisService;
 import org.junit.Test;
 import org.lappsgrid.metadata.IOSpecification;
 import org.lappsgrid.metadata.ServiceMetadata;
-import org.lappsgrid.serialization.Data;
-import org.lappsgrid.serialization.Serializer;
 import org.lappsgrid.serialization.lif.Annotation;
 import org.lappsgrid.serialization.lif.Container;
 import org.lappsgrid.serialization.lif.View;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-/**
- * <i>TestTokenizer.java</i> Language Application Grids (<b>LAPPS</b>)
- * <p>
- * <p>
- * Test cases are from <a
- * Tutorial</a>
- * href="http://www.programcreek.com/2012/05/opennlp-tutorial/">OpenNLP
- * <p>
- *
- * @author Chunqi Shi ( <i>shicq@cs.brandeis.edu</i> )<br>
- *         Nov 20, 2013<br>
- *
- */
-public class TestNamedEntityRecognizer extends TestService {
+public class TestNamedEntityRecognizer extends TestBrandeisService {
 
     public TestNamedEntityRecognizer() {
         service = new NamedEntityRecognizer();

@@ -15,13 +15,6 @@ import java.util.List;
 
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-/**
- *
- * @author Chunqi SHI (shicq@cs.brandeis.edu)
- * @author Keigh Rim (krim@brandeis.edu)
- * @since 2014-01-31
- *
- */
 public class NamedEntityRecognizer extends AbstractStanfordCoreNLPWebService {
 
     private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a named entity recognition service" +
@@ -33,11 +26,11 @@ public class NamedEntityRecognizer extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    public String execute(Container container) {
+    protected String execute(Container container) {
 
         String text = container.getText();
         View view = container.newView();
-        setUpContainsMetadata(view);
+        setUpContainsMetadata(view, "stanford");
 
         int id = -1;
         edu.stanford.nlp.pipeline.Annotation annotation
@@ -64,8 +57,8 @@ public class NamedEntityRecognizer extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    ServiceMetadata loadMetadata() {
-        ServiceMetadata metadata = this.setCommonMetadata();
+    protected ServiceMetadata loadMetadata() {
+        ServiceMetadata metadata = setCommonMetadata();
         metadata.setDescription(TOOL_DESCRIPTION);
         metadata.getProduces().addAnnotations(Uri.NE);
         metadata.getProduces().addTagSet(Uri.NE, Uri.TAGS_NER_STANFORD);

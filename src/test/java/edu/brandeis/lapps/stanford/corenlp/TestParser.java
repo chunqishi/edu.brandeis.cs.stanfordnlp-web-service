@@ -1,31 +1,16 @@
 package edu.brandeis.lapps.stanford.corenlp;
 
-import junit.framework.Assert;
+import edu.brandeis.lapps.TestBrandeisService;
 import org.junit.Test;
 import org.lappsgrid.metadata.IOSpecification;
 import org.lappsgrid.metadata.ServiceMetadata;
-import org.lappsgrid.serialization.Data;
-import org.lappsgrid.serialization.Serializer;
 import org.lappsgrid.serialization.lif.Container;
-import org.lappsgrid.serialization.lif.View;
 
-import java.util.List;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-/**
- * <i>TestParser.java</i> Language Application Grids (<b>LAPPS</b>)
- * <p>
- * <p> Test cases are from
- * <a href="http://www.programcreek.com/2012/05/opennlp-tutorial/">
- *     OpenNLP Tutorial</a>
- * <p>
- *
- * @author Chunqi Shi ( <i>shicq@cs.brandeis.edu</i> )<br>Nov 20, 2013<br>
- *
- */
-public class TestParser extends TestService {
+public class TestParser extends TestBrandeisService {
 
 
     public TestParser() {
