@@ -19,7 +19,7 @@ import static org.lappsgrid.vocabulary.Features.Token;
 
 public class POSTagger extends AbstractStanfordCoreNLPWebService {
 
-    private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a part-of-speech tagging service" +
+    private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a part-of-speech tagging service" +
                     "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\" annotators as one pipeline.";
 
     public POSTagger() {
@@ -27,7 +27,7 @@ public class POSTagger extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    protected String execute(Container container) {
+    protected String processPayload(Container container) {
 
         String text = container.getText();
         View view = container.newView();

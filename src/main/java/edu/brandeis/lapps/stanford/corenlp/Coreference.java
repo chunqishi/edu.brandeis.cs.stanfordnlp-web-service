@@ -25,7 +25,7 @@ import static org.lappsgrid.vocabulary.Features.Token;
 
 public class Coreference extends AbstractStanfordCoreNLPWebService {
 
-    private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a coreference resolution service" +
+    private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a coreference resolution service" +
             "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\", \"lemma\", \"ner\", \"parse\", \"dcoref\" annotators as one pipeline.";
 
     public Coreference() {
@@ -34,7 +34,7 @@ public class Coreference extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    protected String execute(Container container) {
+    protected String processPayload(Container container) {
 
         String text = container.getText();
         View view = container.newView();

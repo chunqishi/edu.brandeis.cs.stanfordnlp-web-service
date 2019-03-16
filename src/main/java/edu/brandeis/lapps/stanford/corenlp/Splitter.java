@@ -17,7 +17,7 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
 
 public class Splitter extends AbstractStanfordCoreNLPWebService {
 
-    private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a sentence splitter service" +
+    private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a sentence splitter service" +
             "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\" annotators as one pipeline.";
 
     public Splitter() {
@@ -25,7 +25,7 @@ public class Splitter extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    protected String execute(Container container) {
+    protected String processPayload(Container container) {
 
         String text = container.getText();
         View view = container.newView();

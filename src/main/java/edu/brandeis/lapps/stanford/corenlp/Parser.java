@@ -26,7 +26,7 @@ import static org.lappsgrid.vocabulary.Features.Token;
 
 public class Parser extends AbstractStanfordCoreNLPWebService {
 
-    private static String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP 3.3.1 providing a phrase structure parser service" +
+    private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a phrase structure parser service" +
                     "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"parse\" annotators as one pipeline.";
 
     public Parser() {
@@ -34,7 +34,7 @@ public class Parser extends AbstractStanfordCoreNLPWebService {
     }
 
     @Override
-    protected String execute(Container container) {
+    protected String processPayload(Container container) {
 
         String text = container.getText();
         View view = container.newView();
