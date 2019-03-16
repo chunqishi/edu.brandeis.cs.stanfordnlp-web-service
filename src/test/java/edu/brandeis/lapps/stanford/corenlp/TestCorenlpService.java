@@ -18,6 +18,7 @@ public class TestCorenlpService extends TestBrandeisService {
 
     public ServiceMetadata testDefaultMetadata() {
         ServiceMetadata metadata = super.testDefaultMetadata();
+        assertEquals("License is not correct", Uri.GPL3, metadata.getLicense());
 
         IOSpecification produces = metadata.getProduces();
         assertEquals("Produces encoding is not correct", "UTF-8", produces.getEncoding());
