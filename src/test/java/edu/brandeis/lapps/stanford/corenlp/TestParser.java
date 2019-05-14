@@ -41,7 +41,7 @@ public class TestParser extends TestCorenlpService {
         Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
         List<Annotation> annotations = executionResult.getView(0).getAnnotations();
 
-        assertEquals("Trees", 2,
+        assertEquals("Trees", 3,
                 annotations.stream().filter(ann -> ann.getAtType().equals(Uri.PHRASE_STRUCTURE)).count());
 
     }
