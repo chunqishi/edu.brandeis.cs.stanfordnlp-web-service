@@ -38,16 +38,63 @@ public class NamedEntityRecognizer extends AbstractStanfordCoreNLPWebService {
         snlp.annotate(annotation);
         List<CoreMap> sents = annotation.get(SentencesAnnotation.class);
         for (CoreMap sent : sents) {
+            int begin = -1;
+            int end = -1;
+            StringBuilder surfForm = new StringBuilder();
+            String category = "";
             for (CoreLabel token : sent.get(TokensAnnotation.class)) {
-                String label = token.ner();
-                if(label != null && !label.equalsIgnoreCase("O")) {
-                    label = label.toLowerCase();
+                String label = token.ner().toLowerCase();
+
+                if (!label.equalsIgnoreCase("O")) {
+
+                    // at the first token or a token after "Out" tag
+                    if (begin == -1) {
+                        begin = token.beginPosition();
+                        end = token.endPosition();
+                        surfForm = new StringBuilder(token.value());
+                        category = label;
+                    }
+
+                    // second or later tokens in a multi-token NE (John/PERSON Johnson/PERSON)
+                    else if (label.equals(category)) {
+                        while (end < token.beginPosition()) {
+                            surfForm.append(" ");
+                            end++;
+                        }
+                        surfForm.append(token.value());
+                        end = token.endPosition();
+                    }
+                    // a NE follows right after a previous NE (does this occur in English?)
+                    else {
+                        // add an annotation for the previous NE of that was kept track
+                        String type = Uri.NE;
+                        Annotation ann = new Annotation(NE_ID + (++id), type, category, begin, end);
+                        ann.addFeature("category", category);
+                        ann.addFeature("word", surfForm.toString());
+                        view.addAnnotation(ann);
+
+                        // then start to track a new NE
+                        begin = token.beginPosition();
+                        end = token.endPosition();
+                        surfForm = new StringBuilder(token.value());
+                        category = label;
+                    }
+
+                }
+                // meets "Out" tag with a NE being tracked
+                else if (begin != -1) {
+                    // add an annotation of that NE
                     String type = Uri.NE;
-                    Annotation ann = new Annotation(NE_ID + (++id), type, label,
-                            token.beginPosition(), token.endPosition());
-                    ann.addFeature("category", label);
-                    ann.addFeature("word", token.value());
+                    Annotation ann = new Annotation(NE_ID + (++id), type, category, begin, end);
+                    ann.addFeature("category", category);
+                    ann.addFeature("word", surfForm.toString());
                     view.addAnnotation(ann);
+
+                    // then reset tracking
+                    begin = -1;
+                    end = -1;
+                    surfForm = new StringBuilder();
+                    category = "";
                 }
             }
         }

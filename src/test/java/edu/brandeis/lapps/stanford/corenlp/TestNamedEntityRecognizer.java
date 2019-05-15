@@ -16,7 +16,7 @@ public class TestNamedEntityRecognizer extends TestCorenlpService {
 
     public TestNamedEntityRecognizer() {
         service = new NamedEntityRecognizer();
-        testText = "Mike is a person. His wife is also a person.";
+        testText = "That guy, John Johnson is a sales associate at Sotheby's. He started working on 7/4/2015 and it was 5 years ago.";
     }
 
     @Test
@@ -35,10 +35,20 @@ public class TestNamedEntityRecognizer extends TestCorenlpService {
         Container executionResult = super.testExecuteFromPlainAndLIFWrapped();
         List<Annotation> annotations = executionResult.getView(0).getAnnotations();
 
-        assertEquals("Entities", 1, annotations.size());
-        Annotation mike = annotations.get(0);
-        assertEquals("Label is not correct.", "person", mike.getLabel());
-        assertEquals("Category is not correct.", "person", mike.getFeature("category"));
+        assertEquals("Entities", 4, annotations.size());
+        Annotation entity = annotations.get(0);
+        assertEquals("Label is not correct.", "person", entity.getLabel());
+        assertEquals("Word is not correct.", "John Johnson", entity.getFeature("word"));
+        assertEquals("Category is not correct.", "person", entity.getFeature("category"));
+        entity = annotations.get(1);
+        assertEquals("Category is not correct.", "organization", entity.getFeature("category"));
+        assertEquals("Word is not correct.", "Sotheby's", entity.getFeature("word"));
+        entity = annotations.get(2);
+        assertEquals("Category is not correct.", "date", entity.getFeature("category"));
+        assertEquals("Word is not correct.", "7/4/2015", entity.getFeature("word"));
+        entity = annotations.get(3);
+        assertEquals("Category is not correct.", "date", entity.getFeature("category"));
+        assertEquals("Word is not correct.", "5 years ago", entity.getFeature("word"));
 
     }
 }
