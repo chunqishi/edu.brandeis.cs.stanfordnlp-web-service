@@ -1,10 +1,16 @@
 package edu.brandeis.lapps.stanford;
 
 import edu.brandeis.lapps.stanford.corenlp.*;
-import edu.brandeis.lapps.stanford.corenlp.Parser;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * A Class to provide command line interface to run a specific tool in this
@@ -16,32 +22,51 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class Cli {
 
+    private static Class<? extends AbstractStanfordCoreNLPWebService> toolClass;
+
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        Class<? extends AbstractStanfordCoreNLPWebService> toolClass;
-        InputStream is;
         if (args.length < 1) {
             help();
         } else {
             toolClass = pickToolClass(args[0]);
             if (args.length == 1 || args[1].equals("-")) {
-                is = System.in;
+                System.out.println(processInputStream(System.in));
             } else {
-                is = new FileInputStream(args[1]);
-            }
-            try {
-                AbstractStanfordCoreNLPWebService tool = toolClass.getConstructor().newInstance();
-                ByteArrayOutputStream toString = new ByteArrayOutputStream();
-                byte[] buffer = new byte[10240];
-                int length;
-                while ((length = is.read(buffer)) != -1) {
-                    toString.write(buffer, 0, length);
+                Path inputPath = Paths.get(args[1]);
+                if (Files.exists(inputPath) && Files.isDirectory(inputPath)) {
+                    processDirectory(inputPath, args[0]);
+                } else {
+                    System.out.println(processInputStream(new FileInputStream(inputPath.toFile())));
                 }
-                String inString =  toString.toString("UTF-8");
-                System.out.println(tool.execute(inString));
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException
-                    | NoSuchMethodException ignored) {
-                // will not happen
             }
+        }
+    }
+
+    private static void processDirectory(Path inDir, String annName) throws IOException {
+        Path outDir = Paths.get(inDir.toString(),
+                annName + DateTimeFormatter.ofPattern("-yyyyMMdd'T'HHmmssX").withZone(ZoneOffset.UTC).format(Instant.now()));
+        Files.createDirectory(outDir);
+        for (File lifFile : Objects.requireNonNull(inDir.toFile().listFiles((dir, name) -> name.charAt(0) != '.' && name.endsWith(".lif")))) {
+            Path outFile = outDir.resolve(Paths.get(lifFile.getName()).getFileName());
+            java.nio.file.Files.write(outFile, processInputStream(new FileInputStream(lifFile)).getBytes());
+        }
+    }
+
+    private static String processInputStream(InputStream is) throws IOException {
+        try {
+            AbstractStanfordCoreNLPWebService tool = toolClass.getConstructor().newInstance();
+            ByteArrayOutputStream toString = new ByteArrayOutputStream();
+            byte[] buffer = new byte[10240];
+            int length;
+            while ((length = is.read(buffer)) != -1) {
+                toString.write(buffer, 0, length);
+            }
+            String inString =  toString.toString("UTF-8");
+            return tool.execute(inString);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException
+                | NoSuchMethodException ignored) {
+            // will not happen
+            return "";
         }
     }
 
@@ -72,10 +97,17 @@ public class Cli {
     }
 
     private static void help() {
-        System.out.println("Usage: One required argument to specify NLP annotator," +
-                "\n       and another optional argument to specify input LIF file are passable." +
-                "\n       If an input file is not given, it will read from STDIN. " +
-                "\n       Output will be written to STDOUT so can be piped to any desired place. "
+        System.out.println("Usage: java -jar jar [tok|spl|pos|ner|cor|dep|par] (input)" +
+                "\n" +
+                "\n       First argument to specify NLP annotator is required. " +
+                "\n       Second and optional argument to specify input." +
+                "\n       If the input is a file, annotated output will be written to " +
+                "\"         STDOUT and can be piped to any other processing. " +
+                "\n       If the input is a directory, a new timestamped-subdirectory will be created " +
+                " \n        named after the annotator, and *.lif (not starting with a dot) " +
+                "\n         files in the original directory will be annotated and " +
+                "\n         the results are written in the subdirectory." +
+                "\n       And finally, the input is not given, STDIN will be read in. "
         );
     }
 
