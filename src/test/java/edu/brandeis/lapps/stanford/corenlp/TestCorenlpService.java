@@ -37,18 +37,7 @@ public class TestCorenlpService extends TestBrandeisService {
     }
 
     public Container testExecuteFromPlainAndLIFWrapped() {
-        Container fromAsIs = reconstructPayload(service.execute(testText));
-        Container fromWrapped = reconstructPayload(service.execute(new Data<>(Uri.LIF, wrapContainer(testText)).asJson()));
-        purgeTimestamps(fromAsIs, fromWrapped);
-        testExecuteResult(fromAsIs, true);
-        testExecuteResult(fromWrapped, false);
-        assertEquals("Text is corrupted.", testText, fromAsIs.getText());
-        assertEquals("Text different when wrapped in a LIF.", fromAsIs.getText(), fromWrapped.getText());
-        assertEquals("A service should generate 1 view.", 1, fromAsIs.getViews().size());
-        assertEquals("#Views different when wrapped in a LIF.", fromAsIs.getViews().size(), fromWrapped.getViews().size());
-        assertEquals("#Annotations different when wrapped in a LIF.", fromAsIs.getView(0).getAnnotations().size(), fromWrapped.getView(0).getAnnotations().size());
-
-        return fromAsIs;
+        return super.testExecuteFromPlainAndLIFWrapped(testText);
     }
 
 }
