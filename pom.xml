@@ -16,6 +16,7 @@
     <modules>
         <module>corenlp-base</module>
         <module>corenlp-cli</module>
+        <module>corenlp-webservice</module>
     </modules>
 
     <properties>
