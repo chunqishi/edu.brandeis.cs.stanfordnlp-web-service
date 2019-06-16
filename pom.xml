@@ -43,6 +43,13 @@
         <system>GitHub</system>
     </issueManagement>
 
+    <repositories>
+        <repository>
+            <id>brandeis-llc-nexus</id>
+            <url>http://morbius.cs-i.brandeis.edu:8081/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
