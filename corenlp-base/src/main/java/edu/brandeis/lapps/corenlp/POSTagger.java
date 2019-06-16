@@ -17,7 +17,7 @@ import java.util.List;
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 import static org.lappsgrid.vocabulary.Features.Token;
 
-public class POSTagger extends AbstractStanfordCoreNLPWebService {
+public class POSTagger extends AbstractCoreNLPWebService {
 
     private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a part-of-speech tagging service" +
                     "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\" annotators as one pipeline.";

@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-public class NamedEntityRecognizer extends AbstractStanfordCoreNLPWebService {
+public class NamedEntityRecognizer extends AbstractCoreNLPWebService {
 
     private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a named entity recognition service" +
             "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\", \"lemma\", \"ner\" annotators as one pipeline.";

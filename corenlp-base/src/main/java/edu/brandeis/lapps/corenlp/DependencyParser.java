@@ -23,7 +23,7 @@ import java.util.List;
 
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-public class DependencyParser extends AbstractStanfordCoreNLPWebService {
+public class DependencyParser extends AbstractCoreNLPWebService {
 
     private static String rootLabel = "ROOT";
     private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a dependency parser service"

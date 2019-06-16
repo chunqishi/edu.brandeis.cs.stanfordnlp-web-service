@@ -30,7 +30,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>edu.brandeis.lapps.stanford.Cli</mainClass>
+                            <mainClass>edu.brandeis.lapps.corenlp.Cli</mainClass>
                         </manifest>
                     </archive>
                     <outputDirectory>${session.executionRootDirectory}</outputDirectory>

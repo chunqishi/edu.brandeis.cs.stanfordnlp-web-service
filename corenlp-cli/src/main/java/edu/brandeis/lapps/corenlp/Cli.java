@@ -19,14 +19,14 @@ import java.nio.file.Paths;
  */
 public class Cli {
 
-    private static Class<? extends AbstractStanfordCoreNLPWebService> toolClass;
+    private static Class<? extends AbstractCoreNLPWebService> toolClass;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         if (args.length < 1) {
             help();
         } else {
             toolClass = pickToolClass(args[0]);
-            AbstractStanfordCoreNLPWebService tool = toolClass.getConstructor().newInstance();
+            AbstractCoreNLPWebService tool = toolClass.getConstructor().newInstance();
             if (args.length == 1 || args[1].equals("-")) {
                 System.out.println(CliUtil.processInputStream(tool, System.in));
             } else {
@@ -40,7 +40,7 @@ public class Cli {
         }
     }
 
-    private static Class<? extends AbstractStanfordCoreNLPWebService> pickToolClass(String arg) throws ClassNotFoundException {
+    private static Class<? extends AbstractCoreNLPWebService> pickToolClass(String arg) throws ClassNotFoundException {
         switch (arg) {
             case "tok":
                 return Tokenizer.class;
@@ -60,9 +60,9 @@ public class Cli {
                 String fullname = Cli.class.getCanonicalName();
                 String packageName = fullname.substring(0, fullname.lastIndexOf("."));
                 if (!arg.startsWith(packageName)) {
-                    arg = packageName + ".corenlp." + arg;
+                    arg = packageName + arg;
                 }
-                return (Class<? extends AbstractStanfordCoreNLPWebService>) Class.forName(arg);
+                return (Class<? extends AbstractCoreNLPWebService>) Class.forName(arg);
         }
     }
 

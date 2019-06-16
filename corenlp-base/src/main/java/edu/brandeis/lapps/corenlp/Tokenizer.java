@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-public class Tokenizer extends AbstractStanfordCoreNLPWebService {
+public class Tokenizer extends AbstractCoreNLPWebService {
 
     private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a tokenizer service" +
             "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\" annotators as one pipeline.";

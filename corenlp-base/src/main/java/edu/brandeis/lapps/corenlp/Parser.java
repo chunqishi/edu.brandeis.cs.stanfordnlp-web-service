@@ -24,7 +24,7 @@ import static org.lappsgrid.discriminator.Discriminators.Uri;
 import static org.lappsgrid.vocabulary.Features.PhraseStructure;
 import static org.lappsgrid.vocabulary.Features.Token;
 
-public class Parser extends AbstractStanfordCoreNLPWebService {
+public class Parser extends AbstractCoreNLPWebService {
 
     private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a phrase structure parser service" +
                     "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"parse\" annotators as one pipeline.";
