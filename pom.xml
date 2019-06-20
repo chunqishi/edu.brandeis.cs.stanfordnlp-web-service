@@ -5,7 +5,7 @@
     <parent>
         <groupId>edu.brandeis.lapps</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,11 +14,11 @@
     <version>2.2.0-SNAPSHOT</version>
     <name>Brandeis LAPPS Grid wrapper for Stanford CoreNLP tools</name>
     <description>
-        This project is to build CoreNLP wrapper based on LAPPS Grid I/O specification,
+        This project is to build CoreNLP wrappers based on LAPPS Grid I/O specification,
         namely using LAPPS Interchange Format and LAPPS Vocabulary.
         Two wrappers are available: a simple commandline interface and lapps webservice.
-        By default (mvn package), the webservice module is build into a war artifact.
-        To bulid the CLI application, use "cli" profile (mvn pacakge -Pcli).
+        By default (mvn package), the webservice module is built into a war artifact.
+        To build the CLI application, use "cli" profile (mvn pacakge -Pcli).
         This version uses CoreNLP ${stanford.version} internally.
     </description>
 

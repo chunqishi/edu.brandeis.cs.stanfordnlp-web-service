@@ -36,7 +36,7 @@
         <!-- final name is different from artifact id for backward compatibility -->
         <finalName>stanfordnlp-web-service#${project.version}</finalName>
 
-        <!-- jetty is configured as a plugin in the org.lappsgrid.war-prent-pom,
+        <!-- jetty is configured as a plugin in the org.lappsgrid.maven.war-parent-pom,
         but using it as a dependency (in 'import' scope) would not import plugins.
         So we need to explicitly configure jetty. -->
         <plugins>
