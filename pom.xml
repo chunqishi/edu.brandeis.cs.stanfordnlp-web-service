@@ -73,6 +73,13 @@
             </modules>
         </profile>
         <profile>
+            <id>release</id>
+            <modules>
+                <module>corenlp-webservice</module>
+                <module>corenlp-cli</module>
+            </modules>
+        </profile>
+        <profile>
             <id>default</id>
             <modules>
                 <module>corenlp-webservice</module>
