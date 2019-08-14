@@ -17,7 +17,7 @@
         <dependency>
             <groupId>edu.brandeis.lapps</groupId>
             <artifactId>corenlp-base</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 
