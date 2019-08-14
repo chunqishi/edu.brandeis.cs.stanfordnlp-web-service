@@ -70,6 +70,7 @@ public abstract class AbstractCoreNLPWebService extends BrandeisService {
         ServiceMetadata metadata = super.setDefaultMetadata();
         metadata.setLicense(Discriminators.Uri.GPL3);
         metadata.setLicenseDesc("This service provides an interface to a Stanford CoreNLP tool, which is originally licensed under GPLv3. For more information, please visit `the official CoreNLP website <https://stanfordnlp.github.io/CoreNLP/#license>`_. ");
+        metadata.setAllow(Discriminators.Uri.ALL);
         IOSpecification required = new IOSpecification();
         required.addLanguage("en");
         required.setEncoding("UTF-8");
