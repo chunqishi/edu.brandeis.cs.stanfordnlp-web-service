@@ -1,134 +1,123 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>edu.brandeis.cs.lapps</groupId>
-    <artifactId>stanfordnlp-web-service</artifactId>
-    <version>2.1.1</version>
-    <packaging>war</packaging>
-    <name>Brandeis LAPPS Web Services wrapping Stanford CoreNLP tools</name>
-    <description>
-        Publish API for the LAPPS exchange data structure (LEDS), the thing that will be serialized to from JSON-LD.
-        Provide converter for the Standford one-per-line format to LEDS.
-    </description>
     <parent>
-        <groupId>org.lappsgrid.maven</groupId>
-        <artifactId>war-parent-pom</artifactId>
-        <version>2.0.5</version>
+        <groupId>edu.brandeis.lapps</groupId>
+        <artifactId>parent-pom</artifactId>
+        <version>1.0.0</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
+    <artifactId>corenlp</artifactId>
+    <packaging>pom</packaging>
+    <version>2.2.0-SNAPSHOT</version>
+    <name>Brandeis LAPPS Grid wrapper for Stanford CoreNLP tools</name>
+    <description>
+        This project is to build CoreNLP wrappers based on LAPPS Grid I/O specification,
+        namely using LAPPS Interchange Format and LAPPS Vocabulary.
+        Two wrappers are available: a simple commandline interface and lapps webservice.
+        By default (mvn package), the webservice module is built into a war artifact.
+        To build the CLI application, use "cli" profile (mvn pacakge -Pcli).
+        This version uses CoreNLP ${stanford.version} internally.
+    </description>
+
+    <developers>
+        <developer>
+            <id>keighrim</id>
+            <name>Keigh Rim</name>
+            <email>krim@brandeis.edu</email>
+            <organization>Lab for Linguistics and Computation, Brandeis University</organization>
+            <organizationUrl>https://www.cs.brandeis.edu/~llc/</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/lappsgrid-services/brandeis-stanfordnlp-service.git</connection>
+        <developerConnection>scm:git:git@github.com:lappsgrid-services/brandeis-stanfordnlp-service.git</developerConnection>
+        <url>https://github.com/lappsgrid-services/brandeis-stanfordnlp-service</url>
+        <tag>master</tag>
+    </scm>
+
+    <issueManagement>
+        <url>https://github.com/lappsgrid-services/brandeis-stanfordnlp-service/issues</url>
+        <system>GitHub</system>
+    </issueManagement>
+
+    <repositories>
+        <repository>
+            <id>brandeis-llc-nexus</id>
+            <url>http://morbius.cs-i.brandeis.edu:8081/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>corenlp-base</module>
+    </modules>
 
     <properties>
-        <lapps.all>2.3.3</lapps.all>
         <stanford.version>3.3.1</stanford.version>
     </properties>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>the Maven central repository</id>
-            <url>http://repo.maven.apache.org/maven2/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.lappsgrid</groupId>
-            <artifactId>all</artifactId>
-            <version>${lapps.all}</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-corenlp</artifactId>
-            <version>${stanford.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-corenlp</artifactId>
-            <version>${stanford.version}</version>
-            <classifier>models</classifier>
-        </dependency>
-        <dependency>
-            <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-parser</artifactId>
-            <version>${stanford.version}</version>
-        </dependency>
-    </dependencies>
+    <profiles>
+        <profile>
+            <id>cli</id>
+            <modules>
+                <module>corenlp-cli</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>corenlp-webservice</module>
+                <module>corenlp-cli</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>default</id>
+            <modules>
+                <module>corenlp-webservice</module>
+            </modules>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
 
     <build>
-
-        <finalName>stanfordnlp-web-service#${project.version}</finalName>
-
         <plugins>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass/>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}</directory>
+                            <includes>
+                                <include>stanfordnlp*.war</include>
+                                <include>${project.artifactId}*.war</include>
+                                <include>stanfordnlp*.jar</include>
+                                <include>${project.artifactId}*.jar</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
                 </configuration>
             </plugin>
-
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <annotationProcessors>
-                        <annotationProcessor>
-                            org.lappsgrid.annotation.processing.MetadataProcessor
-                        </annotationProcessor>
-                    </annotationProcessors>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.2</version>
-                <executions>
-                    <execution>
-                        <id>re-process-resources</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>resources</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-
-            <plugin>
-                <!-- Hit out-of-memory during test with the default options -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
-                <configuration>
-                    <argLine>-Xms512m -Xmx2496m -XX:MaxPermSize=128m</argLine>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
         </plugins>
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>version.properties</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>**</include>
-                </includes>
-            </resource>
-        </resources>
-
     </build>
 
 </project>
