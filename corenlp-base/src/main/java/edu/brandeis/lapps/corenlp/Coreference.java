@@ -23,7 +23,7 @@ import java.util.Map;
 
 import static org.lappsgrid.vocabulary.Features.Token;
 
-public class Coreference extends AbstractCoreNLPWebService {
+public class Coreference extends AbstractCorenlpWrapper {
 
     private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a coreference resolution service" +
             "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\", \"pos\", \"lemma\", \"ner\", \"parse\", \"dcoref\" annotators as one pipeline.";

@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-public class Tokenizer extends AbstractCoreNLPWebService {
+public class Tokenizer extends AbstractCorenlpWrapper {
 
     private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a tokenizer service" +
             "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\" annotators as one pipeline.";
@@ -44,7 +44,7 @@ public class Tokenizer extends AbstractCoreNLPWebService {
                         token.beginPosition(), token.endPosition());
                 tid++;
                 // TODO: 3/1/2018 this should go away when we complete ditch the "top-level" label field in LIF scheme
-                ann.setLabel("token");
+                ann.setLabel("TOK");
                 ann.addFeature("word", token.value());
             }
             sid++;

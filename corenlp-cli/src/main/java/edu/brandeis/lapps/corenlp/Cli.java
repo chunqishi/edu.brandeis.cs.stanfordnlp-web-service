@@ -19,14 +19,14 @@ import java.nio.file.Paths;
  */
 public class Cli {
 
-    private static Class<? extends AbstractCoreNLPWebService> toolClass;
+    private static Class<? extends AbstractCorenlpWrapper> toolClass;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         if (args.length < 1) {
             help();
         } else {
             toolClass = pickToolClass(args[0]);
-            AbstractCoreNLPWebService tool = toolClass.getConstructor().newInstance();
+            AbstractCorenlpWrapper tool = toolClass.getConstructor().newInstance();
             if (args.length == 1 || args[1].equals("-")) {
                 System.out.println(CliUtil.processInputStream(tool, System.in));
             } else {
@@ -40,7 +40,7 @@ public class Cli {
         }
     }
 
-    private static Class<? extends AbstractCoreNLPWebService> pickToolClass(String arg) throws ClassNotFoundException {
+    private static Class<? extends AbstractCorenlpWrapper> pickToolClass(String arg) throws ClassNotFoundException {
         switch (arg) {
             case "tok":
                 return Tokenizer.class;
@@ -62,7 +62,7 @@ public class Cli {
                 if (!arg.startsWith(packageName)) {
                     arg = packageName + arg;
                 }
-                return (Class<? extends AbstractCoreNLPWebService>) Class.forName(arg);
+                return (Class<? extends AbstractCorenlpWrapper>) Class.forName(arg);
         }
     }
 
@@ -72,11 +72,13 @@ public class Cli {
                 "\n       First argument to specify NLP annotator is required. " +
                 "\n       Second and optional argument to specify input." +
                 "\n       If the input is a file, annotated output will be written to " +
-                "\"         STDOUT and can be piped to any other processing. " +
+                "\n         STDOUT and can be piped to any other processing. " +
                 "\n       If the input is a directory, a new timestamped-subdirectory will be created " +
-                " \n        named after the annotator, and *.lif (not starting with a dot) " +
+                "\n         named after the annotator, and *.lif (not starting with a dot) " +
                 "\n         files in the original directory will be annotated and " +
                 "\n         the results are written in the subdirectory." +
+                "\n       NOTE that when input is a directory, the program does NOT recursively " +
+                "\n         search for .lif files. It only looks for the input directory." +
                 "\n       And finally, the input is not given, STDIN will be read in. "
         );
     }

@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.lappsgrid.discriminator.Discriminators.Uri;
 
-public class Splitter extends AbstractCoreNLPWebService {
+public class Splitter extends AbstractCorenlpWrapper {
 
     private String TOOL_DESCRIPTION = "This service is a wrapper around Stanford CoreNLP " + getWrappeeVersion() + " providing a sentence splitter service" +
             "\nInternally it uses CoreNLP default \"tokenize\", \"ssplit\" annotators as one pipeline.";
@@ -41,7 +41,7 @@ public class Splitter extends AbstractCoreNLPWebService {
             int end = sent.get(CharacterOffsetEndAnnotation.class);
             Annotation ann = view.newAnnotation(SENT_ID + (++id), Uri.SENTENCE, start, end);
             // TODO: 3/1/2018 this should go away when we complete ditch the "top-level" label field in LIF scheme
-            ann.setLabel("sentence");
+            ann.setLabel("S");
             ann.addFeature("sentence", sent.toString());
         }
         // set discriminator to LIF

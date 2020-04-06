@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class AbstractCoreNLPWebService extends BrandeisService {
+public abstract class AbstractCorenlpWrapper extends BrandeisService {
 
     private static final Logger log = LoggerFactory
-            .getLogger(AbstractCoreNLPWebService.class);
+            .getLogger(AbstractCorenlpWrapper.class);
 
     private static ConcurrentHashMap<String, StanfordCoreNLP> cache =
             new ConcurrentHashMap<>();
@@ -31,7 +31,7 @@ public abstract class AbstractCoreNLPWebService extends BrandeisService {
     private Properties props = new Properties();
     StanfordCoreNLP snlp = null;
 
-    AbstractCoreNLPWebService() {
+    AbstractCorenlpWrapper() {
         super();
     }
 
