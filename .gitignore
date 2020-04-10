@@ -2,6 +2,9 @@
 target/
 Version.java
 
+# java
+**/*.jar
+**/*.war
 
 ### idea & os-specifics template
 ### Linux template

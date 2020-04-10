@@ -31,8 +31,15 @@ public class Cli {
                 System.out.println(CliUtil.processInputStream(tool, System.in));
             } else {
                 Path inputPath = Paths.get(args[1]);
+                int threadpoolsize;
+                if (args.length > 2) {
+                    threadpoolsize = Integer.parseInt(args[2]);
+                } else {
+                    threadpoolsize = 4;
+                }
+
                 if (Files.exists(inputPath) && Files.isDirectory(inputPath)) {
-                    CliUtil.processDirectory(tool, inputPath, args[0]);
+                    CliUtil.processDirectory(tool, inputPath, args[0], threadpoolsize);
                 } else {
                     System.out.println(CliUtil.processInputStream(tool, new FileInputStream(inputPath.toFile())));
                 }
